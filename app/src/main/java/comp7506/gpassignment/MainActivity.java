@@ -9,6 +9,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -22,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView Header, CallListView, Header_History;
     private Button btn_Setting, btn_history;
     private ToggleButton btn_spam;
+    private SharedPreferences settings;
 
 
     @Override
@@ -66,6 +68,15 @@ public class MainActivity extends AppCompatActivity {
 
         btn_spam.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // Save the setting On/Off to phone
+                try
+                {
+                    settings = getSharedPreferences("gpassignment", 0);
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putBoolean("turnedOn", isChecked);
+                    editor.commit();
+                }catch (Exception e){}
+
                 if (isChecked) {
                     // The toggle is enabled
                     try
@@ -81,7 +92,11 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        btn_spam.toggle();
+
+        settings = getSharedPreferences("gpassignment", 0);
+        boolean turned_on = settings.getBoolean("turnedOn", false);
+        btn_spam.setChecked(turned_on);//Modify By Owen, 2017.11.14
+
     }
 
     @Override
